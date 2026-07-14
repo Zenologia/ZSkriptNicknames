@@ -1,0 +1,85 @@
+on join:
+    set join message to ""
+    if metadata value "vanished" of player is true:
+        stop
+    wait 1 tick
+    set {_nick} to the value of the placeholder "hexnicks_nick" for player
+    if {_nick} is "" or "<none>":
+        set {_nick} to player's name
+    broadcast "%{_nick}%&r joined the server"
+
+on quit:
+    if metadata value "vanished" of player is true:
+        set quit message to ""
+        stop
+    set {_nick} to the value of the placeholder "hexnicks_nick" for player
+    if {_nick} is "" or "<none>":
+        set {_nick} to player's name
+    set quit message to "%{_nick}%&r left the server"
+
+# Mid-session vanish toggles (standalone vanish commands)
+on command "vanish" or "v" or "sv" or "supervanish:vanish" or "supervanish:v" or "supervanish:sv" or "premiumvanish:vanish" or "premiumvanish:v" or "premiumvanish:sv" or "essentials:vanish" or "essentials:v" or "cmi:vanish" or "cmi:v":
+    if command sender is a player:
+        set {_target} to player
+    else:
+        set {_target} to {none}
+    if arg 1 is set:
+        set {_resolved} to arg 1 parsed as offline player
+        if {_resolved} is set:
+            set {_target} to {_resolved}
+    if {_target} is not set:
+        stop
+    if metadata value "vanished" of {_target} is true:
+        set {_was} to true
+    else:
+        set {_was} to false
+    wait 2 ticks
+    if {_target} is not online:
+        stop
+    if metadata value "vanished" of {_target} is true:
+        set {_now} to true
+    else:
+        set {_now} to false
+    if {_was} is {_now}:
+        stop
+    set {_nick} to the value of the placeholder "hexnicks_nick" for {_target}
+    if {_nick} is "" or "<none>":
+        set {_nick} to {_target}'s name
+    if {_now} is true:
+        broadcast "%{_nick}%&r left the server"
+    else:
+        broadcast "%{_nick}%&r joined the server"
+
+# Mid-session vanish toggles invoked as `/cmi vanish [...]`
+on command "cmi" or "cmi:cmi":
+    arg 1 is "vanish" or "v"
+    if command sender is a player:
+        set {_target} to player
+    else:
+        set {_target} to {none}
+    if arg 2 is set:
+        set {_resolved} to arg 2 parsed as offline player
+        if {_resolved} is set:
+            set {_target} to {_resolved}
+    if {_target} is not set:
+        stop
+    if metadata value "vanished" of {_target} is true:
+        set {_was} to true
+    else:
+        set {_was} to false
+    wait 2 ticks
+    if {_target} is not online:
+        stop
+    if metadata value "vanished" of {_target} is true:
+        set {_now} to true
+    else:
+        set {_now} to false
+    if {_was} is {_now}:
+        stop
+    set {_nick} to the value of the placeholder "hexnicks_nick" for {_target}
+    if {_nick} is "" or "<none>":
+        set {_nick} to {_target}'s name
+    if {_now} is true:
+        broadcast "%{_nick}%&r left the server"
+    else:
+        broadcast "%{_nick}% joined the server"
